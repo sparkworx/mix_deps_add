@@ -13,10 +13,12 @@ defmodule Mix.Tasks.Deps.Add do
   }
 
   def run(package_names, opts \\ [])
+
   def run([], _opts) do
     IO.puts("Usage: mix deps.add PACKAGE_NAME…")
     System.halt(2)
   end
+
   def run(package_names, opts) do
     editor = Keyword.get(opts, :editor, MixExsEditor)
     versioner = Keyword.get(opts, :versioner, PackageVersion)
@@ -38,37 +40,46 @@ defmodule Mix.Tasks.Deps.Add do
   end
 
   defp announce_results(%{results: []}) do
-    Mix.raise "Oops: Nothing done?!"
+    Mix.raise("Oops: Nothing done?!")
   end
+
   defp announce_results(%{results: results} = state) do
     results
-    |> Enum.reverse
+    |> Enum.reverse()
     |> Enum.each(&announce_result/1)
 
     if !MixExsEditor.success?(results) do
       Mix.raise("mix.exs unchanged.")
     end
+
     state
   end
 
   defp announce_result({:versioned, name, version}) do
     IO.puts(":#{name}, \"~> #{version}\"")
   end
+
   defp announce_result({:relative, name, path}) do
     IO.puts(":#{name}, path: \"#{path}\"")
   end
+
   defp announce_result({:name_conflict, name}) do
     IO.puts("Oops: \"#{name}\" is already a dependency!")
   end
+
   defp announce_result({:notfound, name}) do
     IO.puts("Oops: https://hex.pm/ doesn't seem to have a package named \"#{name}\".")
   end
+
   defp announce_result(parsing_error) do
     text = Map.get(@mix_exs_parsing_errors, parsing_error, nil)
+
     if text do
-      Mix.raise "Oops: mix.exs doesn't look right: #{text}\nSee https://github.com/bryanstearns/mix_deps_add#the-rules-for-your-deps0-function for details"
+      Mix.raise(
+        "Oops: mix.exs doesn't look right: #{text}\nSee https://github.com/bryanstearns/mix_deps_add#the-rules-for-your-deps0-function for details"
+      )
     else
-      Mix.raise "Something went wrong; this might help: \"#{inspect parsing_error}\""
+      Mix.raise("Something went wrong; this might help: \"#{inspect(parsing_error)}\"")
     end
   end
 end

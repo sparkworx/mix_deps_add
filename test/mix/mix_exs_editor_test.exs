@@ -6,11 +6,15 @@ defmodule MixExsEditorTest do
     %{before: stuff_before, deps: deps, after: stuff_after, filename: filename, results: []} =
       MixExsEditor.read("test/fixtures/good_mix.exs")
 
-    assert "  # These are the example dependencies listed by `mix help deps`\n  defp deps do" = stuff_before
+    assert "  # These are the example dependencies listed by `mix help deps`\n  defp deps do" =
+             stuff_before
+
     assert [
-      ":foobar, path: \"path/to/foobar\"",
-      ":foobar, git: \"https://github.com/elixir-lang/foobar.git\", tag: \"0.1\"",
-      ":plug, \">= 0.4.0\""] = deps
+             ":foobar, path: \"path/to/foobar\"",
+             ":foobar, git: \"https://github.com/elixir-lang/foobar.git\", tag: \"0.1\"",
+             ":plug, \">= 0.4.0\""
+           ] = deps
+
     assert "  end\n" = stuff_after
     assert "test/fixtures/good_mix.exs" = filename
   end
@@ -31,11 +35,18 @@ defmodule MixExsEditorTest do
     }
 
     with_baz = MixExsEditor.add(before_state, "baz", version: "1.0.0")
-    assert %{results: [{:versioned, "baz", "1.0.0"}], deps: [":bar, ...", ":baz, \"~> 1.0.0\"", ":foo, ..."]} = with_baz
+
+    assert %{
+             results: [{:versioned, "baz", "1.0.0"}],
+             deps: [":bar, ...", ":baz, \"~> 1.0.0\"", ":foo, ..."]
+           } = with_baz
 
     with_baz_and_quux = MixExsEditor.add(with_baz, "quux", path: "../quux")
-    assert %{results: [{:relative, "quux", "../quux"}, {:versioned, "baz", "1.0.0"}],
-             deps: [":bar, ...", ":baz, \"~> 1.0.0\"", ":foo, ...", ":quux, path: \"../quux\""]} = with_baz_and_quux
+
+    assert %{
+             results: [{:relative, "quux", "../quux"}, {:versioned, "baz", "1.0.0"}],
+             deps: [":bar, ...", ":baz, \"~> 1.0.0\"", ":foo, ...", ":quux, path: \"../quux\""]
+           } = with_baz_and_quux
   end
 
   test "rejects duplicates" do
@@ -47,7 +58,7 @@ defmodule MixExsEditorTest do
     }
 
     assert %{results: [{:name_conflict, "foo"}]} =
-      MixExsEditor.add(before_state, "foo", versioned: "0.0.0")
+             MixExsEditor.add(before_state, "foo", versioned: "0.0.0")
   end
 
   describe "end-to-end" do
@@ -61,20 +72,21 @@ defmodule MixExsEditorTest do
     end
 
     test "succeeds correctly", context do
-      :ok = MixExsEditor.read(context[:fixture_path])
-      |> MixExsEditor.add("idna", version: "4.0.0")
-      |> MixExsEditor.write()
+      :ok =
+        MixExsEditor.read(context[:fixture_path])
+        |> MixExsEditor.add("idna", version: "4.0.0")
+        |> MixExsEditor.write()
 
       assert File.read!(context[:fixture_path]) ==
-             File.read!("test/fixtures/end-to-end-result.exs")
+               File.read!("test/fixtures/end-to-end-result.exs")
     end
 
     test "fails correctly", context do
-      assert {:error, [{:name_conflict, "poison"},
-                       {:versioned, "foo", "1.0.0"}]} = MixExsEditor.read(context[:fixture_path])
-        |> MixExsEditor.add("foo", version: "1.0.0")
-        |> MixExsEditor.add("poison", version: "6.6.6")
-        |> MixExsEditor.write()
+      assert {:error, [{:name_conflict, "poison"}, {:versioned, "foo", "1.0.0"}]} =
+               MixExsEditor.read(context[:fixture_path])
+               |> MixExsEditor.add("foo", version: "1.0.0")
+               |> MixExsEditor.add("poison", version: "6.6.6")
+               |> MixExsEditor.write()
     end
   end
 end

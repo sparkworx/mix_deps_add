@@ -3,8 +3,8 @@
 
 Mix.start()
 Mix.shell(Mix.Shell.Process)
-Application.put_env(:mix, :colors, [enabled: false])
-ExUnit.start [trace: "--trace" in System.argv]
+Application.put_env(:mix, :colors, enabled: false)
+ExUnit.start(trace: "--trace" in System.argv())
 
 # BJS: commented out:
 # unless {1, 7, 4} <= Mix.SCM.Git.git_version do
@@ -17,9 +17,7 @@ defmodule MixTest.Case do
 
   defmodule Sample do
     def project do
-      [app: :sample,
-       version: "0.1.0",
-       aliases: [sample: "compile"]]
+      [app: :sample, version: "0.1.0", aliases: [sample: "compile"]]
     end
   end
 
@@ -34,13 +32,13 @@ defmodule MixTest.Case do
       Logger.remove_backend(:console)
     end
 
-    on_exit fn ->
+    on_exit(fn ->
       Application.start(:logger)
       Mix.env(:dev)
-      Mix.Task.clear
-      Mix.Shell.Process.flush
-      Mix.ProjectStack.clear_cache
-      Mix.ProjectStack.clear_stack
+      Mix.Task.clear()
+      Mix.Shell.Process.flush()
+      Mix.ProjectStack.clear_cache()
+      Mix.ProjectStack.clear_stack()
       delete_tmp_paths()
 
       if apps do
@@ -48,9 +46,10 @@ defmodule MixTest.Case do
           Application.stop(app)
           Application.unload(app)
         end
+
         Logger.add_backend(:console, flush: true)
       end
-    end
+    end)
 
     :ok
   end
@@ -60,7 +59,7 @@ defmodule MixTest.Case do
   end
 
   def fixture_path(extension) do
-    Path.join fixture_path(), extension
+    Path.join(fixture_path(), extension)
   end
 
   def tmp_path do
@@ -68,27 +67,27 @@ defmodule MixTest.Case do
   end
 
   def tmp_path(extension) do
-    Path.join tmp_path(), to_string(extension)
+    Path.join(tmp_path(), to_string(extension))
   end
 
   def purge(modules) do
-    Enum.each modules, fn(m) ->
+    Enum.each(modules, fn m ->
       :code.purge(m)
       :code.delete(m)
-    end
+    end)
   end
 
   def in_tmp(which, function) do
     path = tmp_path(which)
-    File.rm_rf! path
-    File.mkdir_p! path
-    File.cd! path, function
+    File.rm_rf!(path)
+    File.mkdir_p!(path)
+    File.cd!(path, function)
   end
 
   defmacro in_fixture(which, block) do
-    module   = inspect __CALLER__.module
-    function = Atom.to_string elem(__CALLER__.function, 0)
-    tmp      = Path.join(module, function)
+    module = inspect(__CALLER__.module)
+    function = Atom.to_string(elem(__CALLER__.function, 0))
+    tmp = Path.join(module, function)
 
     quote do
       unquote(__MODULE__).in_fixture(unquote(which), unquote(tmp), unquote(block))
@@ -96,7 +95,7 @@ defmodule MixTest.Case do
   end
 
   def in_fixture(which, tmp, function) do
-    src  = fixture_path(which)
+    src = fixture_path(which)
     dest = tmp_path(tmp)
     flag = String.to_charlist(tmp_path())
 
@@ -104,18 +103,18 @@ defmodule MixTest.Case do
     File.mkdir_p!(dest)
     File.cp_r!(src, dest)
 
-    get_path = :code.get_path
-    previous = :code.all_loaded
+    get_path = :code.get_path()
+    previous = :code.all_loaded()
 
     try do
-      File.cd! dest, function
+      File.cd!(dest, function)
     after
       :code.set_path(get_path)
 
-      for {mod, file} <- :code.all_loaded -- previous,
+      for {mod, file} <- :code.all_loaded() -- previous,
           file == :in_memory or
-          (is_list(file) and :lists.prefix(flag, file)) do
-        purge [mod]
+            (is_list(file) and :lists.prefix(flag, file)) do
+        purge([mod])
       end
     end
   end
@@ -126,23 +125,27 @@ defmodule MixTest.Case do
 
   def ensure_touched(file, current) do
     File.touch!(file)
+
     unless File.stat!(file).mtime > current do
       ensure_touched(file, current)
     end
   end
 
   def os_newline do
-    case :os.type do
+    case :os.type() do
       {:win32, _} -> "\r\n"
       _ -> "\n"
     end
   end
 
   def mix(args, envs \\ []) when is_list(args) do
-    System.cmd(elixir_executable(),
-               ["-r", mix_executable(), "--" | args],
-               stderr_to_stdout: true,
-               env: envs) |> elem(0)
+    System.cmd(
+      elixir_executable(),
+      ["-r", mix_executable(), "--" | args],
+      stderr_to_stdout: true,
+      env: envs
+    )
+    |> elem(0)
   end
 
   def mix_port(args, envs \\ []) when is_list(args) do
@@ -164,8 +167,9 @@ defmodule MixTest.Case do
   end
 
   defp delete_tmp_paths do
-    tmp = tmp_path() |> String.to_charlist
-    for path <- :code.get_path,
+    tmp = tmp_path() |> String.to_charlist()
+
+    for path <- :code.get_path(),
         :string.str(path, tmp) != 0,
         do: :code.del_path(path)
   end
