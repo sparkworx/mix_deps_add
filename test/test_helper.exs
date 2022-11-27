@@ -190,7 +190,7 @@ end
 ## Copy fixtures to tmp
 
 # BJS: was: fixtures = ~w(rebar_dep rebar_override)
-fixtures = ~w(deps_add)
+fixtures = ~w(.)
 
 Enum.each(fixtures, fn fixture ->
   source = MixTest.Case.fixture_path(fixture)
