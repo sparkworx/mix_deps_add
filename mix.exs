@@ -4,7 +4,7 @@ defmodule MixDepsAdd.MixProject do
   def project do
     [
       app: :mix_deps_add,
-      version: "0.1.3",
+      version: "0.2.0-dev",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod
     ]

@@ -2,8 +2,9 @@
 
 Adds a mix task for auto-adding dependencies to `mix.exs`, *if* you happen to
 keep your `mix.exs` file's `deps` function in a simple canonical form.
+(HINT: you *should* be using `mix format` to do this.)
 
-```
+```console
 $ mix deps.add httpoison hackney ../my_local_package
 :httpoison, "~> 0.11.2"
 :hackney, "~> 1.5.5"
@@ -14,11 +15,15 @@ For names without a slash, it looks up the latest released version on
 [hex.pm](https://hex.pm); if there's a slash, it's treated as a local path.
 
 ## Installation
-Install its archive, so that it's available in all of your projects:
+Install archive directly from GitHub repo `HEAD` so that it's available to use with all of your projects:
 
+```console
+$ MIX_ENV=prod mix archive.install github sparkworx/mix_deps_add
 ```
-$ mix archive.install https://github.com/bryanstearns/mix_deps_add/releases/download/0.1.3/mix_deps_add-0.1.3.ez
-```
+> **NB:** In the near term, this will likely be the best way to consume this project since release archives compiled with Elixir <1.9 / OTP <22 will throw BEAM `:badfile` errors with OTP 25+.
+> Building the archives striaght from the GitHub project tree, no matter which valid combination of Elixir/OTP used locally, will produce valid BEAM files for *your* development environment.
+> For the long term, raising the Elixir minimum supported version to v1.9 may help with archive distribution on [Hex](https://hex.pm).
+> FWIW, I am not the expert on this matter...
 
 ## Why?
 I like how `npm install --save <name>` figures out the current version of
@@ -28,7 +33,7 @@ Mix because `mix.exs` is freeform Elixir code, but since the `deps` function
 is pretty simple, I just require that it adheres to the usual format &
 content... for example:
 
-```
+```elixir
   defp deps do
     [
       {:hackney, "~> 1.5.5"},
@@ -55,6 +60,7 @@ to pull requests!
 It doesn't care if the square brackets are on their own lines; it'll put them
 on their own lines and sort the dependencies alphabetically when it writes the
 file back out.
+**Suggestion**: keep you `mix.exs` file cleanly formatted with `mix format`, and most of the above rules will be satisfied!
 
 Yes, it's a bit of a hack, but It Works On My Machine, so I'm shipping it.
 
@@ -64,5 +70,5 @@ Yes, it's a bit of a hack, but It Works On My Machine, so I'm shipping it.
 - [x] support adding local projects with `path:`
 - [ ] preserve comments within the `deps` function
 - [ ] allow prerelease versions
-- [ ] support "git:" dependencies
-- [ ] add the [trailing comma](https://github.com/lexmag/elixir-style-guide#trailing-comma)
+- [ ] support all dependency schemes supported by [`Mix.Task.Deps`](https://hexdocs.pm/mix/Mix.Tasks.Deps.html) (e.g. `:git`, `:github`, etc.)
+- [x] *remove* the [trailing comma](https://github.com/lexmag/elixir-style-guide#trailing-comma) of the last dependency (we do this already)

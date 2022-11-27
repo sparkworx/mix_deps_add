@@ -1,3 +1,12 @@
+## 0.2.0-dev
+
+- Clean up codebase for modern Elixir
+- Address compiler warnings and deprecation notices
+- Use `mix format` across codebase
+- Tweaked docs for in-progress development
+- Remove copy/paste boilerplate from `test_helper.exs` not contributing to functionality
+- Ongoing changes to converge code to Elixir Style Guide (but no changes to core functionality)
+
 ## 0.1.3
 
 - Support relative paths to local projects: `mix deps.add ../my_local_package`
