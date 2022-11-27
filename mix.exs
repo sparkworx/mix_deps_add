@@ -1,4 +1,4 @@
-defmodule MixDepsAdd.Mixfile do
+defmodule MixDepsAdd.MixProject do
   use Mix.Project
 
   def project do
@@ -6,17 +6,17 @@ defmodule MixDepsAdd.Mixfile do
       app: :mix_deps_add,
       version: "0.1.3",
       elixir: "~> 1.6",
-      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod
     ]
   end
 
   # Configuration for the OTP application
   #
-  # Type "mix help compile.app" for more information
+  # Run "mix help compile.app" to learn about applications.
   def application do
-    # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger, :inets, :ssl]]
+    [
+      extra_applications: [:logger, :inets, :ssl]
+    ]
   end
 
   # Note that we don't have a deps/0 function here; as a Mix task, we can't
