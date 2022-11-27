@@ -18,7 +18,7 @@ For names without a slash, it looks up the latest released version on
 Install archive directly from GitHub repo `HEAD` so that it's available to use with all of your projects:
 
 ```console
-$ MIX_ENV=prod mix archive.install github sparkworx/mix_deps_add
+$ mix archive.install github sparkworx/mix_deps_add
 ```
 > **NB:** In the near term, this will likely be the best way to consume this project since release archives compiled with Elixir <1.9 / OTP <22 will throw BEAM `:badfile` errors with OTP 25+.
 > Building the archives striaght from the GitHub project tree, no matter which valid combination of Elixir/OTP used locally, will produce valid BEAM files for *your* development environment.
