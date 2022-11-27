@@ -16,7 +16,7 @@ defmodule MixDepsAdd.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    [extra_applications: [:logger, :inets, :ssl]]
   end
 
   # Note that we don't have a deps/0 function here; as a Mix task, we can't
