@@ -5,9 +5,15 @@ defmodule MixDepsAdd.HexClient do
 
     :httpc.request(
       :get,
-      {to_charlist(package_info_url(package_name)),
-       [{'user-agent', 'mix deps add'}, {'accept', 'application/vnd.hex+elixir'}]},
+      {
+        to_charlist(package_info_url(package_name)),
+        [
+          {'user-agent', 'mix deps add'},
+          {'accept', 'application/vnd.hex+elixir'}
+        ]
+      },
       [],
+      # TODO: add `socket_opts()` for TLS peer verification:
       []
     )
     |> process_http_response
