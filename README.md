@@ -60,7 +60,7 @@ to pull requests!
 It doesn't care if the square brackets are on their own lines; it'll put them
 on their own lines and sort the dependencies alphabetically when it writes the
 file back out.
-**Suggestion**: keep you `mix.exs` file cleanly formatted with `mix format`, and most of the above rules will be satisfied!
+**Suggestion**: keep your `mix.exs` file cleanly formatted with `mix format`, and most of the above rules will be satisfied!
 
 Yes, it's a bit of a hack, but It Works On My Machine, so I'm shipping it.
 
